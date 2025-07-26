@@ -2,8 +2,12 @@ import subprocess
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
 
-input_file = "Automata.xlsx"
-output_dir = "C:/Users/xthem/Documents"
+office_path_win = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
+office_path_linux = "/usr/bin/soffice"
+input_file = "xlsx/Automata.xlsx"
+output_dir_win = "C:/Users/xthem/Documents"
+output_dir_linux = "/home/themartianx/Documents"
+
 
 wb = load_workbook(filename=input_file)
 sheet_ranges = wb['Sheet1']
@@ -13,10 +17,10 @@ wb.save(filename=input_file)
 
 
 subprocess.run([
-    r"C:\Program Files\LibreOffice\program\soffice.exe",
+    office_path_linux,
     "--headless",
     "--convert-to", "pdf:calc_pdf_Export:{\"Magnification\":{\"type\":\"long\",\"value\":\"4\"}, \"Zoom\":{\"type\":\"long\",\"value\":\"65\"}}",
-    "--outdir", output_dir,
+    "--outdir", output_dir_linux,
     input_file
 ])
 
