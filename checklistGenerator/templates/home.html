@@ -4,8 +4,8 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-Hi {{ user.username }}!
 
+    <a href="{% url 'revizie' %}">Adauga revizie</a>
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
