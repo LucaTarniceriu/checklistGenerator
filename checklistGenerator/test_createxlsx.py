@@ -47,4 +47,6 @@ data inspectie: D49
 tehincian: D50
 reprezentant beneficiar: D51
 
+!Rampa nu are tip
+
 '''

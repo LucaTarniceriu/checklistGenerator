@@ -16,3 +16,6 @@ class Site:
 
     def addDoor(self, door):
         self.doors.append(door)
+
+    def __repr__(self):
+        return self.beneficiar+" "+self.locatie

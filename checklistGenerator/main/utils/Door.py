@@ -11,6 +11,8 @@ class Door:
     dimensiuni = str
     tip = str
 
+    titluTabel = str
+
     componente = []
 
     @staticmethod
@@ -34,13 +36,15 @@ class Door:
         ws['D50'] = "....."
         ws['D51'] = "....."
 
-    def __init__(self, productType, produs, anFabricatie, nr, dimensiuni, tip):
+    def __init__(self, productType, produs, anFabricatie, nr, dimensiuni, tip, titluTabel):
         self.productType = productType
         self.produs = produs
         self.anFabricatie = anFabricatie
         self.nr = nr
         self.dimensiuni = dimensiuni
         self.tip = tip
+
+        self.titluTabel = titluTabel
 
         wb = load_workbook(filename="xlsx/" + productType + ".xlsx")
         ws = wb.active
@@ -49,17 +53,17 @@ class Door:
         if productType == "Antifoc":
             self.nrComponente = 26
         elif productType == "Automata":
-            self.nrComponente = 10
+            self.nrComponente = 22
         elif productType == "Burduf":
-            self.nrComponente = 10
+            self.nrComponente = 16
         elif productType == "Metalica":
-            self.nrComponente = 10
+            self.nrComponente = 14
         elif productType == "Rampa":
-            self.nrComponente = 10
+            self.nrComponente = 16
         elif productType == "Rapida":
-            self.nrComponente = 10
+            self.nrComponente = 17
         elif productType == "Sectionala":
-            self.nrComponente = 10
+            self.nrComponente = 20
 
 
         for row in range(14, 14 + self.nrComponente):

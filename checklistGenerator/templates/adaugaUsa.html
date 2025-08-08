@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Adauga Usa{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{{ produs }}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ doorForm }}
+        <input type="submit" value="Adauga">
+    </form>
+
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}

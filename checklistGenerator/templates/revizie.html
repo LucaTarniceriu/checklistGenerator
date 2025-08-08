@@ -5,7 +5,8 @@
 {% block content %}
 {% if user.is_authenticated %}
 
-    <form action="" method="post">
+
+    <form action="/home/magazin/" method="post">
     {% csrf_token %}
     {{ siteForm }}
     <input type="submit" value="Creaza Comanda">

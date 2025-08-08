@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Magazin{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<h1> {{ beneficiar }} {{ locatie }}</h1>
+
+<p> Nr comanda: {{ comanda }} </p>
+
+    <form action="/home/adaugaUsa/" method="post">
+    {% csrf_token %}
+    {{ addDoorForm }}
+    <input type="submit" value="Adauga Usa">
+</form>
+
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}
