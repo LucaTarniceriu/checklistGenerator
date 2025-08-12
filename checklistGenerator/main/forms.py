@@ -6,7 +6,7 @@ class SiteForm(forms.Form):
     locatie = forms.CharField(max_length=100)
     nr_comanda = forms.CharField(max_length=100)
 
-
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='siteForm')
 
 DoorChoices = (
     ("1", "Antifoc"),
@@ -19,6 +19,7 @@ DoorChoices = (
 )
 class AddDoorForm(forms.Form):
     tip_usa = forms.ChoiceField(choices=DoorChoices)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='addDoorForm')
 
 
 class UsaAntifocForm(forms.Form):
@@ -30,6 +31,7 @@ class UsaAntifocForm(forms.Form):
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
 
 class UsaAutomataForm(forms.Form):
     nr_canate = forms.ChoiceField(
@@ -46,12 +48,15 @@ class UsaAutomataForm(forms.Form):
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
 
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
+
 class BurdufForm(forms.Form):
 
     an_fabricatie = forms.IntegerField()
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
 
 class UsaMetalicaForm(forms.Form):
 
@@ -59,6 +64,7 @@ class UsaMetalicaForm(forms.Form):
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
 
 class RampaForm(forms.Form):
 
@@ -66,6 +72,7 @@ class RampaForm(forms.Form):
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
 
 class UsaRapidaForm(forms.Form):
 
@@ -73,6 +80,7 @@ class UsaRapidaForm(forms.Form):
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')
 
 class UsaSectionalaForm(forms.Form):
 
@@ -80,3 +88,4 @@ class UsaSectionalaForm(forms.Form):
     nr = forms.IntegerField
     dimensiuni = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder':'0000x0000mm'}))
     tip = forms.CharField(max_length=100)
+    formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='doorForm')

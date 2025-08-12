@@ -26,7 +26,7 @@ class DoorModel(models.Model):
     nr = models.CharField(max_length=30)
     dimensiuni = models.CharField(max_length=30)
     tip = models.CharField(max_length=30)
-    titluTabel = models.CharField(max_length=30)
+    titluTabel = models.CharField(max_length=30, default='')
 
     def __str__(self):
         return self.productType + "(" + self.site.__str__() + ")"
@@ -34,8 +34,8 @@ class DoorModel(models.Model):
 class DoorComponentModel(models.Model):
     door = models.ForeignKey(DoorModel, on_delete=models.CASCADE, related_name="components")
 
-    name = models.CharField(max_length=30)
-    broken = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, default='1')
+    broken = models.CharField(max_length=30, default='0')
     verified = models.CharField(max_length=30)
     number = models.IntegerField(default=1)
     notes = models.TextField(blank=True, null=True)
