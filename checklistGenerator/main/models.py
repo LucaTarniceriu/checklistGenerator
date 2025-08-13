@@ -29,7 +29,7 @@ class DoorModel(models.Model):
     titluTabel = models.CharField(max_length=30, default='')
 
     def __str__(self):
-        return self.productType + "(" + self.site.__str__() + ")"
+        return self.produs + " " + self.nr + "(" + self.site.__str__() + ")"
 
 class DoorComponentModel(models.Model):
     door = models.ForeignKey(DoorModel, on_delete=models.CASCADE, related_name="components")

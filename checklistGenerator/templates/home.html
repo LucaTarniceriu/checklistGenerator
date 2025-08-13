@@ -5,11 +5,23 @@
 {% block content %}
 {% if user.is_authenticated %}
 
-    <a href="{% url 'revizie' %}">Adauga revizie</a>
+
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Logout</button>
     </form>
+
+    {% for entryRevizie in reviziiDatabase %}
+        <h3> {{ entryRevizie }} </h3>
+    {% endfor %}
+
+    {% if siteExists %}
+        <a href="{% url 'deleteSite' %}" style="color:red">Sterge revizie</a>
+        <a href="{% url 'magazinRedirect' %}">Editeaza revizia</a>
+    {% else %}
+        <a href="{% url 'revizie' %}">Adauga revizie</a>
+    {% endif %}
+
 
 {% else %}
 <p>You are not logged in</p>

@@ -5,6 +5,7 @@ class Door:
     site = str
 
     productType = str
+    fileName = str
     nrComponente = int
 
     produs = str
@@ -50,38 +51,39 @@ class Door:
 
         self.titluTabel = titluTabel
 
-        numeComponente = []
-        wb = 0
 
-        if productType == "1": #Antifoc
+    def setFileName(self):
+        # a se apela dupa setarea atributului "productType"
+        if self.productType == "1": #Antifoc
+            self.fileName = "xlsx/Antifoc.xlsx"
             self.nrComponente = 26
-            wb = load_workbook(filename="xlsx/Antifoc.xlsx")
-        elif productType == "2": #Automata
+        elif self.productType == "2": #Automata
+            self.fileName = "xlsx/Automata.xlsx"
             self.nrComponente = 22
-            wb = load_workbook(filename="xlsx/Automata.xlsx")
-        elif productType == "3": #Burduf
+        elif self.productType == "3": #Burduf
+            self.fileName = "xlsx/Burduf.xlsx"
             self.nrComponente = 16
-            wb = load_workbook(filename="xlsx/Burduf.xlsx")
-        elif productType == "4": #Metalica
+        elif self.productType == "4": #Metalica
+            self.fileName = "xlsx/Metalica.xlsx"
             self.nrComponente = 14
-            wb = load_workbook(filename="xlsx/Metalica.xlsx")
-        elif productType == "5": #Rampa
+        elif self.productType == "5": #Rampa
+            self.fileName = "xlsx/Rampa.xlsx"
             self.nrComponente = 16
-            wb = load_workbook(filename="xlsx/Rampa.xlsx")
-        elif productType == "6": #Rapida
+        elif self.productType == "6": #Rapida
+            self.fileName = "xlsx/Rapida.xlsx"
             self.nrComponente = 17
-            wb = load_workbook(filename="xlsx/Rapida.xlsx")
-        elif productType == "7": #Sectionala
+        elif self.productType == "7": #Sectionala
+            self.fileName = "xlsx/Sectionala.xlsx"
             self.nrComponente = 20
-            wb = load_workbook(filename="xlsx/Sectionala.xlsx")
         else:
             print("eroare selectare usa")
-            wb = load_workbook(filename="xlsx/error.xlsx")
 
+
+    def setComponents(self):
+        # a se apela dupa apelarea "setFileName"
+        numeComponente = []
+        wb = load_workbook(filename=self.fileName)
         ws = wb.active
-
-
-
         for row in range(14, 14 + self.nrComponente):
             nume = ws['C' + str(row)].value
             numeComponente.append(ws['C' + str(row)].value )

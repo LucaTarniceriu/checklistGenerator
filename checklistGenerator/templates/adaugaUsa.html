@@ -6,7 +6,7 @@
 {% if user.is_authenticated %}
 
 {{ produs }}
-    <form action="" method="post">
+    <form action="/home/magazin/" method="post">
         {% csrf_token %}
         {{ doorForm }}
         <input type="submit" value="Adauga">
