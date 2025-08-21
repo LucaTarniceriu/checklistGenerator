@@ -1,0 +1,6 @@
+Add to doorModel database following attributes: nr_canate and model.
+The attributes will not be mandatory
+make a function that goes through all the doors objects and if it is type 1 or 2 will change the title acordingly.
+The function will be called right before modifing the excel file
+
+for editing the door entries, create a different form for each door if it comes form doorEntryId, which will have the form already completed with the data coresponding to id. Sending that form will modify the data in database, !!not create another entry!!

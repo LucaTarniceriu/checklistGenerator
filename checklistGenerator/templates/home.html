@@ -11,15 +11,27 @@
         <button type="submit">Logout</button>
     </form>
 
-    {% for entryRevizie in reviziiDatabase %}
-        <h3> {{ entryRevizie }} </h3>
-    {% endfor %}
 
-    {% if siteExists %}
-        <a href="{% url 'deleteSite' %}" style="color:red">Sterge revizie</a>
-        <a href="{% url 'magazinRedirect' %}">Editeaza revizia</a>
-    {% else %}
-        <a href="{% url 'revizie' %}">Adauga revizie</a>
+
+    <a href="{% url 'revizie' %}">Adauga locatie</a>
+    {% if siteExists == 'true' %}
+        {% for entryLocatie in locatiiDatabase %}
+            <div class="locationEntry">
+                <h3> {{ entryLocatie }} </h3>
+                <form method="post" action="{% url 'magazinRedirect' %}">
+                    {% csrf_token %}
+                    <input type="text" hidden value=" {{ entryLocatie.locatie }} " name="location">
+                    <input type="submit" value="editeaza">
+                </form>
+
+                <form method="post" action="{% url 'deleteSite' %}">
+                    {% csrf_token %}
+                    <input type="text" hidden value=" {{ entryLocatie.locatie }} " name="location">
+                    <input type="submit" style="color:red" value="sterge">
+                </form>
+            </div>
+        {% endfor %}
+
     {% endif %}
 
 

@@ -10,13 +10,27 @@
 <p> Nr comanda: {{ comanda }} </p>
 
     <form action="/home/adaugaUsa/" method="post">
-    {% csrf_token %}
-    {{ addDoorForm }}
-    <input type="submit" value="Adauga Usa">
-</form>
+        {% csrf_token %}
+        {{ addDoorForm }}
+        <input type="submit" value="Adauga Usa">
+    </form>
 
 {% for door in doorDatabase %}
-    <h3> {{ door }} </h3>
+    <div class="doorEntry">
+        <h3> {{ door }} </h3>
+        <form method="post" action="{% url '' %}">
+            {% csrf_token %}
+            <input type="text" hidden value=" {{ door.id }} " name="id">
+            <input type="text" hidden value="doorEntryId" name="formName">
+            <input type="submit" value="editeaza">
+        </form>
+
+        <form method="post" action="{% url '' %}">
+            {% csrf_token %}
+            <input type="text" hidden value=" {{ door.id }} " name="id">
+            <input type="submit" style="color:red" value="sterge">
+        </form>
+    </div>
 {% endfor %}
 
 {% else %}

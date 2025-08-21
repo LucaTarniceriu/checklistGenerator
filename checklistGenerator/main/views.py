@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from main.utils.Door import Door
 from main.utils.Site import Site
 from main.utils.DoorComponent import DoorComponent
@@ -10,14 +10,18 @@ from .models import SiteModel, DoorModel, DoorComponentModel
 # Create your views here.
 
 def home(request):
+    request.session['currentSite'] = "empty"
+    print(request.session["currentSite"])
+
     context = {}
     context['siteExists'] = 'false'
-    if SiteModel.objects.first():
-        context['reviziiDatabase'] = SiteModel.objects.all()
+    if SiteModel.objects.count() > 0:
+        context['locatiiDatabase'] = SiteModel.objects.all()
         context['siteExists'] = 'true'
     return render(request, "home.html", context)
 
 def revizie(request):
+    print(request.session["currentSite"])
     context = {}
     context['siteForm'] = SiteForm()
 
@@ -25,6 +29,7 @@ def revizie(request):
     return render(request, "revizie.html", context)
 
 def magazin(request):
+    print(request.session["currentSite"])
     context = {}
 
     if request.method == "POST":
@@ -34,6 +39,8 @@ def magazin(request):
             locatie = request.POST.get("locatie")
             nr_comanda = request.POST.get("nr_comanda")
 
+            request.session['currentSite'] = locatie
+
             #siteObject = Site(contract, beneficiar, locatie, nr_comanda)
             SiteModel.objects.update_or_create(
                 contract = contract,
@@ -42,9 +49,10 @@ def magazin(request):
                 nrComanda = nr_comanda
             )
         else:
-            site = SiteModel.objects.first()
+            site = SiteModel.objects.get(locatie=request.session['currentSite'])
             (beneficiar, locatie, nr_comanda) = (site.beneficiar, site.locatie, site.nrComanda)
 
+        site = SiteModel.objects.get(locatie=request.session['currentSite'])
         if request.POST.get("formName") == "doorForm":
             doorObject = Door()
             doorObject.productType = request.session.get('productType')
@@ -70,7 +78,7 @@ def magazin(request):
             if doorObject.productType == "7": #Sectionala
                 doorObject.produs = "USA SECTIONALA CU ACTIONARE ELECTRICA"
                 doorObject.titluTabel = "PRODUS: USA SECTIONALA CU ACTIONARE ELECTRICA"
-
+## THIS WILL BE A FUNCTION
             if doorObject.productType == "1":
                 nr_canate = request.POST.get('nr_canate')
                 if nr_canate == "1":
@@ -88,13 +96,11 @@ def magazin(request):
                     doorObject.produs += "GEZE"
                 if model == "2":
                     doorObject.produs += "DORMA"
-
+## END OF THIS WILL BE A FUNCTION
             an_fabricatie = request.POST.get('an_fabricatie')
             nr = request.POST.get('nr')
             dimensiuni = request.POST.get('dimensiuni')
             tip = request.POST.get('tip')
-
-            site = SiteModel.objects.first()
 
             doorObject.site = site
             doorObject.anFabricatie = an_fabricatie
@@ -124,7 +130,8 @@ def magazin(request):
         context['comanda'] = nr_comanda
         context['addDoorForm'] = AddDoorForm()
 
-    context['doorDatabase'] = DoorModel.objects.all()
+    site = SiteModel.objects.get(locatie=request.session['currentSite'])
+    context['doorDatabase'] = DoorModel.objects.filter(site=site)
 
     return render(request, "magazin.html", context)
 
@@ -162,6 +169,35 @@ def addDoor(request):
             context['produs'] = produs
             context['doorForm'] = form
 
+        if request.POST.get("formName") == "doorEntryId":
+            doorId = request.POST.get('id')
+            door = DoorModel.objects.get(id=doorId)
+            productType = door.productType
+
+## COMPLETE THE FORMS WITH THE DATA IN THE DATABASE, CHANGE NAME AS UPDATE_DATA?
+            if productType == "1": #Antifoc
+                form = UsaAntifocForm()
+                produs = "Antifoc"
+                form.nr = door.nr
+            if productType == "2": #Automata
+                form = UsaAutomataForm()
+                produs="Automata"
+            if productType == "3": #Burduf
+                form = BurdufForm()
+                produs = "Burduf"
+            if productType == "4": #Metalica
+                form = UsaMetalicaForm()
+                produs = "Metalica"
+            if productType == "5": #Rampa
+                form = RampaForm()
+                produs = "Rampa"
+            if productType == "6": #Rapida
+                form = UsaRapidaForm()
+                produs = "Rapida"
+            if productType == "7": #Sectionala
+                form = UsaSectionalaForm()
+                produs = "Sectionala"
+
         print("type=",productType)
 
 
@@ -171,14 +207,23 @@ def addDoor(request):
     return render(request, "adaugaUsa.html", context)
 
 def deleteSite(request):
-    SiteModel.objects.all().delete()
-    return render(request, "home.html")
+    if request.method == "POST":
+        site = SiteModel.objects.filter(locatie=request.POST.get('location').strip())
+        site.delete()
+    return redirect('home')
 
 def magazinRedirect(request):
     context = {}
-    context['doorDatabase'] = DoorModel.objects.all()
-    context['beneficiar'] = SiteModel.objects.first().beneficiar
-    context['locatie'] = SiteModel.objects.first().locatie
-    context['comanda'] = SiteModel.objects.first().nrComanda
+
+
+    if request.method == "POST":
+        request.session['currentSite'] = request.POST.get("location").strip()
+
+    site = SiteModel.objects.get(locatie=request.session['currentSite'])
+
+    context['doorDatabase'] = DoorModel.objects.filter(site=site)
+    context['beneficiar'] = site.beneficiar
+    context['locatie'] = site.locatie
+    context['comanda'] = site.nrComanda
     context['addDoorForm'] = AddDoorForm()
     return render(request, "magazin.html", context)

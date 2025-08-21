@@ -18,6 +18,7 @@ class SiteModel(models.Model):
 
 class DoorModel(models.Model):
     site = models.ForeignKey(SiteModel, on_delete=models.CASCADE, related_name="doors")
+    id = models.AutoField(primary_key=True)
 
     productType = models.CharField(max_length=30)
     componentNr = models.IntegerField()
