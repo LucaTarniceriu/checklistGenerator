@@ -9,7 +9,34 @@
     <form action="/home/magazin/" method="post">
         {% csrf_token %}
         {{ doorForm }}
-        <input type="submit" value="Inainte">
+
+        {% if source == "from_edit" %}
+            <div id="componentTable" style="border: solid, black, 1px; padding: 5px; margin: 5px">
+                    <table>
+                        <tr>
+                            <th>Nr</th>
+                            <th>Componenta</th>
+                            <th>Verificare</th>
+                            <th>Inlocuire</th>
+                            <th>Nr bucati</th>
+                            <th>Observatii</th>
+                        </tr>
+                        {% for component in componentDatabase %}
+                            <tr>
+                                <!--!! align td in css file !!-->
+                                <td style="text-align: center"><input name="nrcrt_{{component.door.id}}" type="text" value="{{ component.nrcrt }}." readonly size="1" style="border:none"></td>
+                                <td style="text-align: left"><input name="name_{{component.nrcrt}}_{{component.door.id}}" type="text" value="{{ component.name }}" readonly size="30"></td>
+                                <td style="text-align: center"><input name="verified_{{component.nrcrt}}_{{component.door.id}}" type="checkbox" {% if component.verified %} checked {% endif %}></td>
+                                <td style="text-align: center"><input name="broken_{{component.nrcrt}}_{{component.door.id}}" type="checkbox" {% if component.broken %} checked {% endif %}></td>
+                                <td style="text-align: center"><input name="number_{{component.nrcrt}}_{{component.door.id}}" type="text" value={{ component.number }} size="1"></td>
+                                <td style="text-align: center"><input name="notes_{{component.nrcrt}}_{{component.door.id}}" type="text" value=" {{ component.notes }}" size="45"></td>
+
+                            </tr>
+                        {% endfor %}
+                    </table>
+            </div>
+        {% endif %}
+        <input type="submit" value="inainte">
     </form>
 
 {% else %}

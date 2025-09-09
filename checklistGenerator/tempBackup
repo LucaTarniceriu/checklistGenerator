@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Adauga Usa{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+{{ produs }}
+    <form action="/home/magazin/" method="post">
+        {% csrf_token %}
+        {{ doorForm }}
+        <input type="submit" value="Inainte">
+    </form>
+
+    {% if source == "from_edit" %}
+        <div id="componentTable" style="border: solid, black, 1px; padding: 5px; margin: 5px">
+            <table style="width:100%">
+                <tr>
+                    <th style="width:5%">Nr</th>
+                    <th style="width:20%">Componenta</th>
+                    <th style="width:5%">Verificare</th>
+                    <th style="width:5%">Inlocuire</th>
+                    <th style="width:5%">Nr bucati</th>
+                    <th style="width:60%">Observatii</th>
+                </tr>
+                {% for component in componentDatabase %}
+                    <tr>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <!--!! align td in css file !!-->
+
+                            <td style="text-align: center"><label>{{ component.nrcrt }}.</label></td>
+                            <td style="text-align: left"><label>{{ component.name }}</label></td>
+                            <td style="text-align: center"><input type="checkbox" value=" {{ component.verified }} "></td>
+                            <td style="text-align: center"><input type="checkbox" value=" {{ component.broken }} "></td>
+                            <td style="text-align: center"><input type="number" value={{ component.number }}></td>
+                            <td style="text-align: center"><input type="text" value=" {{ component.notes }}"></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+    {% endif %}
+
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}

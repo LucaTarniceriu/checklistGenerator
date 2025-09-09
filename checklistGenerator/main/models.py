@@ -40,11 +40,12 @@ class DoorModel(models.Model):
 class DoorComponentModel(models.Model):
     door = models.ForeignKey(DoorModel, on_delete=models.CASCADE, related_name="components")
 
-    name = models.CharField(max_length=30, default='1')
-    broken = models.CharField(max_length=30, default='0')
-    verified = models.CharField(max_length=30)
+    name = models.CharField(max_length=30)
+    verified = models.BooleanField(default=True)
+    broken = models.BooleanField(default=False)
     number = models.IntegerField(default=1)
     notes = models.TextField(blank=True, null=True)
+    nrcrt = models.IntegerField()
 
     def __str__(self):
-        return self.name + "<" + self.door.__str__() + ">"
+        return str(self.nrcrt) + "<" + self.door.__str__() + ">"

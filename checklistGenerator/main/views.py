@@ -142,6 +142,22 @@ def magazin(request):
                 door.model = doorObject.model
                 door.save()
 
+                componentsToEdit = DoorComponentModel.objects.filter(door=door)
+                for entry in componentsToEdit:
+                    componentNrCrt = entry.nrcrt
+                    if request.POST.get('verified_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
+                        entry.verified = True
+                    else:
+                        entry.verified = False
+                    if request.POST.get('broken_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
+                        entry.broken = True
+                    else:
+                        entry.broken = False
+                    entry.number = request.POST.get('number_'+str(componentNrCrt)+'_'+str(door.id))
+                    entry.notes = request.POST.get('notes_'+str(componentNrCrt)+'_'+str(door.id))
+
+                    entry.save()
+
 
             else: # not in database. Create entry
                 doorEntry = DoorModel.objects.update_or_create(
@@ -158,6 +174,16 @@ def magazin(request):
                     nrCanate=doorObject.nrCanate,
                     model=doorObject.model
                 )
+
+                for component in doorObject.componente:
+                    print(component)
+                    componentEntry = DoorComponentModel.objects.update_or_create(
+                        door=doorEntry[0],
+                        name=component.name,
+                        number=component.number,
+                        notes=component.notes,
+                        nrcrt=component.nrcrt,
+                    )
 
         context['beneficiar'] = beneficiar
         context['locatie'] = locatie
@@ -176,6 +202,8 @@ def addDoor(request):
         if request.POST.get("formName") == "addDoorForm":
             productType = request.POST.get("tip_usa")
             request.session['productType'] = productType
+
+            context["source"] = "from_add"
 
             if productType == "1": #Antifoc
                 form = UsaAntifocForm()
@@ -209,6 +237,9 @@ def addDoor(request):
             productType = door.productType
             request.session['productType'] = productType
 
+            context["componentDatabase"] = DoorComponentModel.objects.filter(door=door)
+            context["source"] = "from_edit"
+
 ## COMPLETE THE FORMS WITH THE DATA IN THE DATABASE, CHANGE NAME AS UPDATE_DATA?
             if productType == "1": #Antifoc
                 form = UsaAntifocForm(initial={
@@ -223,6 +254,7 @@ def addDoor(request):
             if productType == "2": #Automata
                 form = UsaAutomataForm(initial={
                     "nr_canate": door.nrCanate,
+                    "model": door.model,
                     "an_fabricatie": door.anFabricatie,
                     "nr": door.nr,
                     "dimensiuni": door.dimensiuni,

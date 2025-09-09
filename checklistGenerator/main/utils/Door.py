@@ -95,7 +95,7 @@ class Door:
             nume = ws['C' + str(row)].value
             numeComponente.append(ws['C' + str(row)].value )
             # se extrage numele componentelor de verificat (a doua coloana a tabelului)
-            self.componente.append(DoorComponent(nume))
+            self.componente.append(DoorComponent(nume, row-13))
 
 
     def __repr__(self):
