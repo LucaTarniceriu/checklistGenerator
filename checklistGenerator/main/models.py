@@ -29,8 +29,13 @@ class DoorModel(models.Model):
     tip = models.CharField(max_length=30)
     titluTabel = models.CharField(max_length=30, default='')
 
+    nrCanate = models.CharField(max_length=5, default='')
+    model = models.CharField(max_length=5, default='')
+
+
+
     def __str__(self):
-        return self.produs + " " + self.nr + "(" + self.site.__str__() + ")"
+        return self.produs + " " + self.nr + "(" + self.site.__str__() + ")_" + str(self.id)
 
 class DoorComponentModel(models.Model):
     door = models.ForeignKey(DoorModel, on_delete=models.CASCADE, related_name="components")

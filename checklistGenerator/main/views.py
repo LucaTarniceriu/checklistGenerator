@@ -28,6 +28,29 @@ def revizie(request):
 
     return render(request, "revizie.html", context)
 
+
+def updateTitle(doorId):
+    door = DoorModel.objects.get(id=doorId)
+    if door.productType == "1":
+        nr_canate = door.nrCanate
+        if nr_canate == "1":
+            door.titluTabel += "UN CANAT"
+        if nr_canate == "2":
+            door.titluTabel += "DOUA CANATE"
+    if door.productType == "2":
+        nr_canate = door.nrCanate
+        if nr_canate == "1":
+            door.titluTabel += "UN CANAT"
+        if nr_canate == "2":
+            door.titluTabel += "DOUA CANATE"
+        model = door.model
+        if model == "1":
+            door.produs += "GEZE"
+        if model == "2":
+            door.produs += "DORMA"
+    door.save()
+
+
 def magazin(request):
     print(request.session["currentSite"])
     context = {}
@@ -58,9 +81,14 @@ def magazin(request):
             doorObject.productType = request.session.get('productType')
 
             if doorObject.productType == "1": #Antifoc
+                doorObject.nrCanate = request.POST.get('nr_canate')
+
                 doorObject.produs = "USA ANTIFOC GLISANTA"
                 doorObject.titluTabel = "PRODUS: UȘĂ ANTIFOC GLISANTĂ CU "
             if doorObject.productType == "2": #Automata
+                doorObject.nrCanate = request.POST.get('nr_canate')
+                doorObject.model = request.POST.get('model')
+
                 doorObject.produs = "USA AUTOMATA "
                 doorObject.titluTabel = "PRODUS: USA AUTOMATA CU "
             if doorObject.productType == "3": #Burduf
@@ -78,29 +106,12 @@ def magazin(request):
             if doorObject.productType == "7": #Sectionala
                 doorObject.produs = "USA SECTIONALA CU ACTIONARE ELECTRICA"
                 doorObject.titluTabel = "PRODUS: USA SECTIONALA CU ACTIONARE ELECTRICA"
-## THIS WILL BE A FUNCTION
-            if doorObject.productType == "1":
-                nr_canate = request.POST.get('nr_canate')
-                if nr_canate == "1":
-                    doorObject.titluTabel += "UN CANAT"
-                if nr_canate == "2":
-                    doorObject.titluTabel += "DOUA CANATE"
-            if doorObject.productType == "2":
-                nr_canate = request.POST.get('nr_canate')
-                if nr_canate == "1":
-                    doorObject.titluTabel += "UN CANAT"
-                if nr_canate == "2":
-                    doorObject.titluTabel += "DOUA CANATE"
-                model = request.POST.get('model')
-                if model == "1":
-                    doorObject.produs += "GEZE"
-                if model == "2":
-                    doorObject.produs += "DORMA"
-## END OF THIS WILL BE A FUNCTION
+
             an_fabricatie = request.POST.get('an_fabricatie')
             nr = request.POST.get('nr')
             dimensiuni = request.POST.get('dimensiuni')
             tip = request.POST.get('tip')
+
 
             doorObject.site = site
             doorObject.anFabricatie = an_fabricatie
@@ -113,17 +124,40 @@ def magazin(request):
 
             print("doorObject=", doorObject)
 
-            DoorModel.objects.update_or_create(
-                productType=doorObject.productType,
-                produs=doorObject.produs,
-                anFabricatie=doorObject.anFabricatie,
-                nr=doorObject.nr,
-                dimensiuni=doorObject.dimensiuni,
-                tip=doorObject.tip,
-                titluTabel=doorObject.titluTabel,
-                site=doorObject.site,
-                componentNr=doorObject.nrComponente,
-            )
+            if request.POST.get('id') != "empty": # already in database. Will be updated not created
+                doorId = request.POST.get('id')
+                print("doorId", doorId, "; editing database")
+                print(request.session)
+                door = DoorModel.objects.get(id=int(doorId))
+                door.site = doorObject.site
+                door.productType = doorObject.productType
+                door.produs = doorObject.produs
+                door.anFabricatie = doorObject.anFabricatie
+                door.nr = doorObject.nr
+                door.dimensiuni = doorObject.dimensiuni
+                door.tip = doorObject.tip
+                door.titluTabel = doorObject.titluTabel
+                door.componentNr = doorObject.nrComponente
+                door.nrCanate = doorObject.nrCanate
+                door.model = doorObject.model
+                door.save()
+
+
+            else: # not in database. Create entry
+                doorEntry = DoorModel.objects.update_or_create(
+                    site=doorObject.site,
+                    productType=doorObject.productType,
+                    produs=doorObject.produs,
+                    anFabricatie=doorObject.anFabricatie,
+                    nr=doorObject.nr,
+                    dimensiuni=doorObject.dimensiuni,
+                    tip=doorObject.tip,
+                    titluTabel=doorObject.titluTabel,
+                    componentNr=doorObject.nrComponente,
+
+                    nrCanate=doorObject.nrCanate,
+                    model=doorObject.model
+                )
 
         context['beneficiar'] = beneficiar
         context['locatie'] = locatie
@@ -173,31 +207,79 @@ def addDoor(request):
             doorId = request.POST.get('id')
             door = DoorModel.objects.get(id=doorId)
             productType = door.productType
+            request.session['productType'] = productType
 
 ## COMPLETE THE FORMS WITH THE DATA IN THE DATABASE, CHANGE NAME AS UPDATE_DATA?
             if productType == "1": #Antifoc
-                form = UsaAntifocForm()
+                form = UsaAntifocForm(initial={
+                    "nr_canate": door.nrCanate,
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Antifoc"
-                form.nr = door.nr
             if productType == "2": #Automata
-                form = UsaAutomataForm()
+                form = UsaAutomataForm(initial={
+                    "nr_canate": door.nrCanate,
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                }
+                )
                 produs="Automata"
             if productType == "3": #Burduf
-                form = BurdufForm()
+                form = BurdufForm(initial={
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Burduf"
             if productType == "4": #Metalica
-                form = UsaMetalicaForm()
+                form = UsaMetalicaForm(initial={
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Metalica"
             if productType == "5": #Rampa
-                form = RampaForm()
+                form = RampaForm(initial={
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Rampa"
             if productType == "6": #Rapida
-                form = UsaRapidaForm()
+                form = UsaRapidaForm(initial={
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Rapida"
             if productType == "7": #Sectionala
-                form = UsaSectionalaForm()
+                form = UsaSectionalaForm(initial={
+                    "an_fabricatie": door.anFabricatie,
+                    "nr": door.nr,
+                    "dimensiuni": door.dimensiuni,
+                    "tip": door.tip,
+                    "id": str(doorId),
+                })
                 produs = "Sectionala"
 
+            context['productType'] = productType
+            context['produs'] = produs
+            context['doorForm'] = form
         print("type=",productType)
 
 
@@ -227,3 +309,9 @@ def magazinRedirect(request):
     context['comanda'] = site.nrComanda
     context['addDoorForm'] = AddDoorForm()
     return render(request, "magazin.html", context)
+
+def deleteDoor(request):
+    if request.method == "POST":
+        doorId = request.POST.get('id')
+        DoorModel.objects.get(id=doorId).delete()
+    return redirect('magazinRedirect')

@@ -18,14 +18,14 @@
 {% for door in doorDatabase %}
     <div class="doorEntry">
         <h3> {{ door }} </h3>
-        <form method="post" action="{% url '' %}">
+        <form method="post" action="{% url 'adaugaUsa' %}">
             {% csrf_token %}
             <input type="text" hidden value=" {{ door.id }} " name="id">
             <input type="text" hidden value="doorEntryId" name="formName">
             <input type="submit" value="editeaza">
         </form>
 
-        <form method="post" action="{% url '' %}">
+        <form method="post" action="{% url 'deleteDoor' %}">
             {% csrf_token %}
             <input type="text" hidden value=" {{ door.id }} " name="id">
             <input type="submit" style="color:red" value="sterge">

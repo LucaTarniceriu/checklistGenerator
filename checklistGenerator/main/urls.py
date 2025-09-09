@@ -7,5 +7,6 @@ urlpatterns = [
     path('magazin/', views.magazin, name='magazin'),
     path('adaugaUsa/', views.addDoor, name='adaugaUsa'),
     path('deleteSite/', views.deleteSite, name='deleteSite'),
-    path('magazinRedirect/', views.magazinRedirect, name='magazinRedirect') #to redirect to "magazin" with context data
+    path('magazinRedirect/', views.magazinRedirect, name='magazinRedirect'), #to redirect to "magazin" with context data
+    path('deleteDoor/', views.deleteDoor, name='deleteDoor')
 ]

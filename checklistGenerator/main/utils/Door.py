@@ -2,6 +2,7 @@ from openpyxl import Workbook, load_workbook
 from main.utils.DoorComponent import DoorComponent
 
 class Door:
+    id = int
     site = str
 
     productType = str
@@ -15,6 +16,9 @@ class Door:
     tip = str
 
     titluTabel = str
+
+    nrCanate = str
+    model = str
 
     componente = []
 
@@ -39,7 +43,7 @@ class Door:
         ws['D50'] = "....."
         ws['D51'] = "....."
 
-    def __init__(self, site = "empty", productType = "empty", produs = "empty", anFabricatie = 0, nr = "empty", dimensiuni = "empty", tip = "empty", titluTabel = "empty"):
+    def __init__(self, site = "empty", productType = "empty", produs = "empty", anFabricatie = 0, nr = "empty", dimensiuni = "empty", tip = "empty", titluTabel = "empty", nrCanate = "", model=""):
         self.site = site
 
         self.productType = productType
@@ -50,6 +54,9 @@ class Door:
         self.tip = tip
 
         self.titluTabel = titluTabel
+
+        self.nrCanate = nrCanate
+        self.model = model
 
 
     def setFileName(self):
