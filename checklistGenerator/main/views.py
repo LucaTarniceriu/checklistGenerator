@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect
+from django.utils.translation.trans_real import language_code_re
+
 from main.utils.Door import Door
 from main.utils.Site import Site
 from main.utils.DoorComponent import DoorComponent
 from django.http import HttpResponse
 from .forms import *
 from .models import SiteModel, DoorModel, DoorComponentModel
+
+import os, webbrowser
+from pypdf import PdfWriter
 
 
 # Create your views here.
@@ -28,30 +33,36 @@ def revizie(request):
 
     return render(request, "revizie.html", context)
 
-
-def updateTitle(doorId):
-    door = DoorModel.objects.get(id=doorId)
-    if door.productType == "1":
-        nr_canate = door.nrCanate
+def updateTitle(doorObject):
+    if doorObject.productType == "1":
+        nr_canate = doorObject.nrCanate
         if nr_canate == "1":
-            door.titluTabel += "UN CANAT"
+            doorObject.titluTabel += " UN CANAT"
         if nr_canate == "2":
-            door.titluTabel += "DOUA CANATE"
-    if door.productType == "2":
-        nr_canate = door.nrCanate
+            doorObject.titluTabel += " DOUA CANATE"
+    if doorObject.productType == "2":
+        nr_canate = doorObject.nrCanate
         if nr_canate == "1":
-            door.titluTabel += "UN CANAT"
+            doorObject.titluTabel += " UN CANAT"
         if nr_canate == "2":
-            door.titluTabel += "DOUA CANATE"
-        model = door.model
+            doorObject.titluTabel += " DOUA CANATE"
+        model = doorObject.model
         if model == "1":
-            door.produs += "GEZE"
+            doorObject.produs += " GEZE"
         if model == "2":
-            door.produs += "DORMA"
-    door.save()
+            doorObject.produs += " DORMA"
 
 
 def magazin(request):
+    DOOR_FORMS = {
+        "1": UsaAntifocForm,
+        "2": UsaAutomataForm,
+        "3": BurdufForm,
+        "4": UsaMetalicaForm,
+        "5": RampaForm,
+        "6": UsaRapidaForm,
+        "7": UsaSectionalaForm,
+    }
     print(request.session["currentSite"])
     context = {}
 
@@ -71,119 +82,132 @@ def magazin(request):
                 locatie = locatie,
                 nrComanda = nr_comanda
             )
-        else:
-            site = SiteModel.objects.get(locatie=request.session['currentSite'])
-            (beneficiar, locatie, nr_comanda) = (site.beneficiar, site.locatie, site.nrComanda)
+
 
         site = SiteModel.objects.get(locatie=request.session['currentSite'])
+        (beneficiar, locatie, nr_comanda) = (site.beneficiar, site.locatie, site.nrComanda)
         if request.POST.get("formName") == "doorForm":
             doorObject = Door()
             doorObject.productType = request.session.get('productType')
 
-            if doorObject.productType == "1": #Antifoc
-                doorObject.nrCanate = request.POST.get('nr_canate')
+            FormClass = DOOR_FORMS.get(doorObject.productType)
+            form = FormClass(request.POST)
+            if form.is_valid():
 
-                doorObject.produs = "USA ANTIFOC GLISANTA"
-                doorObject.titluTabel = "PRODUS: UȘĂ ANTIFOC GLISANTĂ CU "
-            if doorObject.productType == "2": #Automata
-                doorObject.nrCanate = request.POST.get('nr_canate')
-                doorObject.model = request.POST.get('model')
+                if doorObject.productType == "1": #Antifoc
+                    doorObject.nrCanate = form.cleaned_data['nr_canate']
 
-                doorObject.produs = "USA AUTOMATA "
-                doorObject.titluTabel = "PRODUS: USA AUTOMATA CU "
-            if doorObject.productType == "3": #Burduf
-                doorObject.produs = "BURDUF DE ETANSARE"
-                doorObject.titluTabel = "PRODUS: BURDUF DE ETANSARE"
-            if doorObject.productType == "4": #Metalica
-                doorObject.produs = "USA METALICA BATANTA"
-                doorObject.titluTabel = "PRODUS: USA METALICA BATANTA"
-            if doorObject.productType == "5": #Rampa
-                doorObject.produs = "RAMPA DE INCARCARE"
-                doorObject.titluTabel = "PRODUS: RAMPA DE INCARCARE"
-            if doorObject.productType == "6": #Rapida
-                doorObject.produs = "USA RAPIDA"
-                doorObject.titluTabel = "PRODUS: USA RAPIDA"
-            if doorObject.productType == "7": #Sectionala
-                doorObject.produs = "USA SECTIONALA CU ACTIONARE ELECTRICA"
-                doorObject.titluTabel = "PRODUS: USA SECTIONALA CU ACTIONARE ELECTRICA"
+                    doorObject.produs = "USA ANTIFOC GLISANTA"
+                    doorObject.titluTabel = "PRODUS: UȘĂ ANTIFOC GLISANTĂ CU"
+                if doorObject.productType == "2": #Automata
+                    doorObject.nrCanate = form.cleaned_data['nr_canate']
+                    doorObject.model = form.cleaned_data['model']
 
-            an_fabricatie = request.POST.get('an_fabricatie')
-            nr = request.POST.get('nr')
-            dimensiuni = request.POST.get('dimensiuni')
-            tip = request.POST.get('tip')
+                    doorObject.produs = "USA AUTOMATA"
+                    doorObject.titluTabel = "PRODUS: USA AUTOMATA CU"
+                if doorObject.productType == "3": #Burduf
+                    doorObject.produs = "BURDUF DE ETANSARE"
+                    doorObject.titluTabel = "PRODUS: BURDUF DE ETANSARE"
+                if doorObject.productType == "4": #Metalica
+                    doorObject.produs = "USA METALICA BATANTA"
+                    doorObject.titluTabel = "PRODUS: USA METALICA BATANTA"
+                if doorObject.productType == "5": #Rampa
+                    doorObject.produs = "RAMPA DE INCARCARE"
+                    doorObject.titluTabel = "PRODUS: RAMPA DE INCARCARE"
+                if doorObject.productType == "6": #Rapida
+                    doorObject.produs = "USA RAPIDA"
+                    doorObject.titluTabel = "PRODUS: USA RAPIDA"
+                if doorObject.productType == "7": #Sectionala
+                    doorObject.produs = "USA SECTIONALA CU ACTIONARE ELECTRICA"
+                    doorObject.titluTabel = "PRODUS: USA SECTIONALA CU ACTIONARE ELECTRICA"
 
-
-            doorObject.site = site
-            doorObject.anFabricatie = an_fabricatie
-            doorObject.nr = nr
-            doorObject.dimensiuni = dimensiuni
-            doorObject.tip = tip
-
-            doorObject.setFileName()
-            doorObject.setComponents()
-
-            print("doorObject=", doorObject)
-
-            if request.POST.get('id') != "empty": # already in database. Will be updated not created
-                doorId = request.POST.get('id')
-                print("doorId", doorId, "; editing database")
-                print(request.session)
-                door = DoorModel.objects.get(id=int(doorId))
-                door.site = doorObject.site
-                door.productType = doorObject.productType
-                door.produs = doorObject.produs
-                door.anFabricatie = doorObject.anFabricatie
-                door.nr = doorObject.nr
-                door.dimensiuni = doorObject.dimensiuni
-                door.tip = doorObject.tip
-                door.titluTabel = doorObject.titluTabel
-                door.componentNr = doorObject.nrComponente
-                door.nrCanate = doorObject.nrCanate
-                door.model = doorObject.model
-                door.save()
-
-                componentsToEdit = DoorComponentModel.objects.filter(door=door)
-                for entry in componentsToEdit:
-                    componentNrCrt = entry.nrcrt
-                    if request.POST.get('verified_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
-                        entry.verified = True
-                    else:
-                        entry.verified = False
-                    if request.POST.get('broken_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
-                        entry.broken = True
-                    else:
-                        entry.broken = False
-                    entry.number = request.POST.get('number_'+str(componentNrCrt)+'_'+str(door.id))
-                    entry.notes = request.POST.get('notes_'+str(componentNrCrt)+'_'+str(door.id))
-
-                    entry.save()
+                an_fabricatie = form.cleaned_data['an_fabricatie']
+                nr = form.cleaned_data['nr']
+                dimensiuni = form.cleaned_data['dimensiuni']
+                tip = form.cleaned_data['tip']
+                data_inspectiei = form.cleaned_data['data_inspectiei']
+                tehnician = form.cleaned_data['tehnician']
+                oras = form.cleaned_data['oras']
 
 
-            else: # not in database. Create entry
-                doorEntry = DoorModel.objects.update_or_create(
-                    site=doorObject.site,
-                    productType=doorObject.productType,
-                    produs=doorObject.produs,
-                    anFabricatie=doorObject.anFabricatie,
-                    nr=doorObject.nr,
-                    dimensiuni=doorObject.dimensiuni,
-                    tip=doorObject.tip,
-                    titluTabel=doorObject.titluTabel,
-                    componentNr=doorObject.nrComponente,
+                doorObject.site = site
+                doorObject.anFabricatie = an_fabricatie
+                doorObject.nr = nr
+                doorObject.dimensiuni = dimensiuni
+                doorObject.tip = tip
+                doorObject.data_inspectiei = data_inspectiei
+                doorObject.tehnician = tehnician
+                doorObject.oras = oras
 
-                    nrCanate=doorObject.nrCanate,
-                    model=doorObject.model
-                )
+                doorObject.setFileName()
+                doorObject.setComponents()
 
-                for component in doorObject.componente:
-                    print(component)
-                    componentEntry = DoorComponentModel.objects.update_or_create(
-                        door=doorEntry[0],
-                        name=component.name,
-                        number=component.number,
-                        notes=component.notes,
-                        nrcrt=component.nrcrt,
+                print("doorObject=", doorObject)
+
+                if request.POST.get('id') != "empty": # already in database. Will be updated not created
+                    doorId = int(form.cleaned_data['id'])
+                    print("doorId", doorId, ";editing database")
+                    print(request.session)
+                    door = DoorModel.objects.get(id=int(doorId))
+                    door.site = doorObject.site
+                    door.productType = doorObject.productType
+                    door.produs = doorObject.produs
+                    door.anFabricatie = doorObject.anFabricatie
+                    door.nr = doorObject.nr
+                    door.dimensiuni = doorObject.dimensiuni
+                    door.tip = doorObject.tip
+                    door.titluTabel = doorObject.titluTabel
+                    door.componentNr = doorObject.nrComponente
+                    door.nrCanate = doorObject.nrCanate
+                    door.model = doorObject.model
+                    door.dataInspectiei = doorObject.data_inspectiei
+                    door.tehnician = doorObject.tehnician
+                    door.oras = doorObject.oras
+                    door.save()
+
+                    componentsToEdit = DoorComponentModel.objects.filter(door=door)
+                    for entry in componentsToEdit:
+                        componentNrCrt = entry.nrcrt
+                        if request.POST.get('verified_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
+                            entry.verified = True
+                        else:
+                            entry.verified = False
+                        if request.POST.get('broken_'+str(componentNrCrt)+'_'+str(door.id)) == 'on':
+                            entry.broken = True
+                        else:
+                            entry.broken = False
+                        entry.number = request.POST.get('number_'+str(componentNrCrt)+'_'+str(door.id))
+                        entry.notes = request.POST.get('notes_'+str(componentNrCrt)+'_'+str(door.id))
+
+                        entry.save()
+                else: # not in database. Create entry
+                    doorEntry = DoorModel.objects.update_or_create(
+                        site=doorObject.site,
+                        productType=doorObject.productType,
+                        produs=doorObject.produs,
+                        anFabricatie=doorObject.anFabricatie,
+                        nr=doorObject.nr,
+                        dimensiuni=doorObject.dimensiuni,
+                        tip=doorObject.tip,
+                        titluTabel=doorObject.titluTabel,
+                        componentNr=doorObject.nrComponente,
+
+                        nrCanate=doorObject.nrCanate,
+                        model=doorObject.model,
+                        dataInspectiei=doorObject.data_inspectiei,
+                        tehnician=doorObject.tehnician,
+                        oras=doorObject.oras,
                     )
+
+                    for component in doorObject.componente:
+                        print(component)
+                        componentEntry = DoorComponentModel.objects.update_or_create(
+                            door=doorEntry[0],
+                            name=component.name,
+                            number=component.number,
+                            notes=component.notes,
+                            nrcrt=component.nrcrt,
+                        )
 
         context['beneficiar'] = beneficiar
         context['locatie'] = locatie
@@ -249,6 +273,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Antifoc"
             if productType == "2": #Automata
@@ -260,6 +287,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 }
                 )
                 produs="Automata"
@@ -270,6 +300,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Burduf"
             if productType == "4": #Metalica
@@ -279,6 +312,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Metalica"
             if productType == "5": #Rampa
@@ -288,6 +324,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Rampa"
             if productType == "6": #Rapida
@@ -297,6 +336,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Rapida"
             if productType == "7": #Sectionala
@@ -306,6 +348,9 @@ def addDoor(request):
                     "dimensiuni": door.dimensiuni,
                     "tip": door.tip,
                     "id": str(doorId),
+                    "data_inspectiei": door.dataInspectiei,
+                    "tehnician": door.tehnician,
+                    "oras": door.oras,
                 })
                 produs = "Sectionala"
 
@@ -347,3 +392,46 @@ def deleteDoor(request):
         doorId = request.POST.get('id')
         DoorModel.objects.get(id=doorId).delete()
     return redirect('magazinRedirect')
+
+def export(request):
+    # Site.fillFile("Antifoc.xlsx", "123456789", "Antifoc", "LIDL", "246", 2024, "62066710", 1, "1000x1000mm", "UȘĂ ANTIFOC GLISANTĂ CU UN CANAT", "10.09.2025", "Teofil Tarniceriu", "Timisoara", tip="culisanta")
+
+    location = request.POST.get('location')
+    site = SiteModel.objects.get(locatie=location)
+    doorDB = DoorModel.objects.filter(site=site)
+
+    doorCount = 0
+    for doorEntry in doorDB: # to export the files with correct title
+        doorCount = doorCount + 1
+        doorObject = Door(site, doorEntry.productType, doorEntry.produs, doorEntry.anFabricatie, doorEntry.nr, doorEntry.dimensiuni, doorEntry.tip, doorEntry.titluTabel, doorEntry.nrCanate, doorEntry.model, doorEntry.dataInspectiei, doorEntry.tehnician, doorEntry.oras)
+        updateTitle(doorObject)
+        doorObject.setFileName()
+        doorObject.setComponents()
+
+        for component in doorObject.componente:
+            componentEntry = DoorComponentModel.objects.get(door=doorEntry,nrcrt=component.nrcrt)
+            component.verified = componentEntry.verified
+            component.broken = componentEntry.broken
+            component.number = componentEntry.number
+            component.notes = componentEntry.notes
+
+        siteObject = Site(site.contract, site.beneficiar, site.locatie, site.nrComanda)
+
+        Site.fillFile(siteObject, doorObject, doorCount)
+
+    pdfs = os.listdir(Site.output_dir)
+    resultName = os.path.basename(pdfs[0]).split("(")[0]
+    merger = PdfWriter()
+    print(os.path.join(Site.final_output_dir, resultName + ".pdf"))
+    for pdf in pdfs:
+        merger.append(os.path.join(Site.output_dir, pdf))
+        os.remove(os.path.join(Site.output_dir, pdf))
+    merger.write(os.path.join(Site.final_output_dir, resultName + ".pdf"))
+    merger.close()
+
+
+
+    print("pdf files:", pdfs)
+    print(os.path.join(Site.output_dir, resultName))
+    webbrowser.open_new(os.path.join(Site.final_output_dir, resultName + ".pdf"))
+    return redirect('home')

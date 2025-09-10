@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 class SiteModel(models.Model):
@@ -26,11 +27,15 @@ class DoorModel(models.Model):
     anFabricatie = models.IntegerField()
     nr = models.CharField(max_length=30)
     dimensiuni = models.CharField(max_length=30)
-    tip = models.CharField(max_length=30)
-    titluTabel = models.CharField(max_length=30, default='')
+    tip = models.CharField(max_length=30, null=True)
+    titluTabel = models.CharField(max_length=50, default='')
 
     nrCanate = models.CharField(max_length=5, default='')
-    model = models.CharField(max_length=5, default='')
+    model = models.CharField(max_length=5, default='', blank=True, null=True)
+
+    dataInspectiei = models.CharField(max_length=11)
+    tehnician = models.CharField(max_length=30)
+    oras = models.CharField(max_length=30)
 
 
 

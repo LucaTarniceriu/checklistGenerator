@@ -2,11 +2,12 @@ import subprocess
 from openpyxl import Workbook, load_workbook
 from openpyxl.drawing.image import Image
 
+
 office_path_win = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
 office_path_linux = "/usr/bin/soffice"
 input_file = "xlsx/Sectionala.xlsx"
 output_dir_win = "C:/Users/xthem/Documents"
-output_dir_linux = "/home/themartianx/Documents"
+output_dir_linux = "/usr/bin/soffice"
 
 
 wb = load_workbook(filename=input_file)

@@ -1,14 +1,6 @@
 
 
 class DoorComponent:
-    name = str
-    nrcrt = int
-    verified = bool
-    borken = bool
-    number = int
-    code = str
-    notes = str
-
     def __init__(self, name, nrcrt, verified = True, broken = False, number = 1, code = "", notes = ""):
         self.name = name
         self.nrcrt = nrcrt

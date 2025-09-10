@@ -1,10 +1,16 @@
 {% extends "base.html" %}
 
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
 
+    <script>
+        function change(id){
+            document.getElementById(id).style.background = '#FFA500';
+        }
+    </script>
 
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
@@ -20,14 +26,20 @@
                 <h3> {{ entryLocatie }} </h3>
                 <form method="post" action="{% url 'magazinRedirect' %}">
                     {% csrf_token %}
-                    <input type="text" hidden value=" {{ entryLocatie.locatie }} " name="location">
+                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
                     <input type="submit" value="editeaza">
                 </form>
 
                 <form method="post" action="{% url 'deleteSite' %}">
                     {% csrf_token %}
-                    <input type="text" hidden value=" {{ entryLocatie.locatie }} " name="location">
+                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
                     <input type="submit" style="color:red" value="sterge">
+                </form>
+
+                <form method="post" action="{% url 'pdfExport' %}">
+                    {% csrf_token %}
+                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
+                    <input id="submitButton{{entryLocatie.locatie}}" type="submit" style="color:blue;" value="PDF" onmousedown="change(this.id)">
                 </form>
             </div>
         {% endfor %}

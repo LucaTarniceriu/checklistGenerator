@@ -24,12 +24,12 @@
                         {% for component in componentDatabase %}
                             <tr>
                                 <!--!! align td in css file !!-->
-                                <td style="text-align: center"><input name="nrcrt_{{component.door.id}}" type="text" value="{{ component.nrcrt }}." readonly size="1" style="border:none"></td>
+                                <td style="text-align: center"><input name="nrcrt_{{component.nrcrt}}_{{component.door.id}}" type="text" value="{{ component.nrcrt }}." readonly size="1" style="border:none"></td>
                                 <td style="text-align: left"><input name="name_{{component.nrcrt}}_{{component.door.id}}" type="text" value="{{ component.name }}" readonly size="30"></td>
                                 <td style="text-align: center"><input name="verified_{{component.nrcrt}}_{{component.door.id}}" type="checkbox" {% if component.verified %} checked {% endif %}></td>
                                 <td style="text-align: center"><input name="broken_{{component.nrcrt}}_{{component.door.id}}" type="checkbox" {% if component.broken %} checked {% endif %}></td>
                                 <td style="text-align: center"><input name="number_{{component.nrcrt}}_{{component.door.id}}" type="text" value={{ component.number }} size="1"></td>
-                                <td style="text-align: center"><input name="notes_{{component.nrcrt}}_{{component.door.id}}" type="text" value=" {{ component.notes }}" size="45"></td>
+                                <td style="text-align: center"><input name="notes_{{component.nrcrt}}_{{component.door.id}}" type="text" value="{{component.notes}}" size="45"></td>
 
                             </tr>
                         {% endfor %}
