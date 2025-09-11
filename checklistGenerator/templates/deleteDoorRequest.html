@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block title %}Confirmare stergere{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<form method="post" action="{% url 'deleteDoor' %}">
+  {% csrf_token %}
+  <input type="text" hidden value="{{id}}" name="id">
+  <input type="submit" value="Sterge {{produs}}">
+</form>
+
+<button onclick="history.back()">Inapoi</button>
+
+{% else %}
+<p>You are not logged in</p>
+<a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}

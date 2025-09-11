@@ -80,13 +80,16 @@ def magazin(request):
                 contract = contract,
                 beneficiar = beneficiar,
                 locatie = locatie,
-                nrComanda = nr_comanda
+                nrComanda = nr_comanda,
+                exported= False
             )
 
 
         site = SiteModel.objects.get(locatie=request.session['currentSite'])
         (beneficiar, locatie, nr_comanda) = (site.beneficiar, site.locatie, site.nrComanda)
         if request.POST.get("formName") == "doorForm":
+            site.exported = False
+            site.save()
             doorObject = Door()
             doorObject.productType = request.session.get('productType')
 
@@ -365,6 +368,13 @@ def addDoor(request):
 
     return render(request, "adaugaUsa.html", context)
 
+def deleteSiteRequest(request):
+    context = {}
+    if request.method == "POST":
+        location = request.POST.get('location').strip()
+        context['location'] = location
+    return render(request, "deleteSiteRequest.html", context)
+
 def deleteSite(request):
     if request.method == "POST":
         site = SiteModel.objects.filter(locatie=request.POST.get('location').strip())
@@ -386,6 +396,14 @@ def magazinRedirect(request):
     context['comanda'] = site.nrComanda
     context['addDoorForm'] = AddDoorForm()
     return render(request, "magazin.html", context)
+
+def deleteDoorRequest(request):
+    context = {}
+    if request.method == "POST":
+        doorId = request.POST.get('id').strip()
+        context['id'] = doorId
+        context['produs'] = request.POST.get('produs').strip()
+    return render(request, "deleteDoorRequest.html", context)
 
 def deleteDoor(request):
     if request.method == "POST":
@@ -434,4 +452,6 @@ def export(request):
     print("pdf files:", pdfs)
     print(os.path.join(Site.output_dir, resultName))
     webbrowser.open_new(os.path.join(Site.final_output_dir, resultName + ".pdf"))
+    site.exported = True
+    site.save()
     return redirect('home')

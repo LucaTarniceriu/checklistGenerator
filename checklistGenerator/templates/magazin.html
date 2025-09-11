@@ -25,9 +25,10 @@
             <input type="submit" value="editeaza">
         </form>
 
-        <form method="post" action="{% url 'deleteDoor' %}">
+        <form method="post" action="{% url 'deleteDoorRequest' %}">
             {% csrf_token %}
-            <input type="text" hidden value=" {{ door.id }} " name="id">
+            <input type="text" hidden value="{{ door.id }}" name="id">
+            <input type="text" hidden value="{{ door.produs }}" name="produs">
             <input type="submit" style="color:red" value="sterge">
         </form>
     </div>

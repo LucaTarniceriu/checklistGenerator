@@ -7,6 +7,7 @@ class SiteModel(models.Model):
     beneficiar = models.CharField(max_length=30)
     locatie = models.CharField(max_length=30)
     nrComanda = models.CharField(max_length=30)
+    exported = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
