@@ -1,10 +1,7 @@
 from django.shortcuts import render, redirect
-from django.utils.translation.trans_real import language_code_re
 
 from main.utils.Door import Door
 from main.utils.Site import Site
-from main.utils.DoorComponent import DoorComponent
-from django.http import HttpResponse
 from .forms import *
 from .models import SiteModel, DoorModel, DoorComponentModel
 
@@ -52,7 +49,6 @@ def updateTitle(doorObject):
         if model == "2":
             doorObject.produs += " DORMA"
 
-
 def magazin(request):
     DOOR_FORMS = {
         "1": UsaAntifocForm,
@@ -72,6 +68,7 @@ def magazin(request):
             beneficiar = request.POST.get("beneficiar")
             locatie = request.POST.get("locatie")
             nr_comanda = request.POST.get("nr_comanda")
+            oras = request.POST.get("oras")
 
             request.session['currentSite'] = locatie
 
@@ -81,6 +78,7 @@ def magazin(request):
                 beneficiar = beneficiar,
                 locatie = locatie,
                 nrComanda = nr_comanda,
+                oras = oras,
                 exported= False
             )
 
@@ -130,7 +128,9 @@ def magazin(request):
                 tip = form.cleaned_data['tip']
                 data_inspectiei = form.cleaned_data['data_inspectiei']
                 tehnician = form.cleaned_data['tehnician']
-                oras = form.cleaned_data['oras']
+                lipsuri = form.cleaned_data['lipsuri']
+                informare = form.cleaned_data['informare']
+
 
 
                 doorObject.site = site
@@ -140,7 +140,8 @@ def magazin(request):
                 doorObject.tip = tip
                 doorObject.data_inspectiei = data_inspectiei
                 doorObject.tehnician = tehnician
-                doorObject.oras = oras
+                doorObject.lipsuri = lipsuri
+                doorObject.informare = informare
 
                 doorObject.setFileName()
                 doorObject.setComponents()
@@ -165,7 +166,8 @@ def magazin(request):
                     door.model = doorObject.model
                     door.dataInspectiei = doorObject.data_inspectiei
                     door.tehnician = doorObject.tehnician
-                    door.oras = doorObject.oras
+                    door.lipsuri = doorObject.lipsuri
+                    door.informare = doorObject.informare
                     door.save()
 
                     componentsToEdit = DoorComponentModel.objects.filter(door=door)
@@ -199,7 +201,8 @@ def magazin(request):
                         model=doorObject.model,
                         dataInspectiei=doorObject.data_inspectiei,
                         tehnician=doorObject.tehnician,
-                        oras=doorObject.oras,
+                        lipsuri=doorObject.lipsuri,
+                        informare=doorObject.informare,
                     )
 
                     for component in doorObject.componente:
@@ -278,7 +281,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri":door.lipsuri,
+                    "informare":door.informare,
                 })
                 produs = "Antifoc"
             if productType == "2": #Automata
@@ -292,7 +296,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 }
                 )
                 produs="Automata"
@@ -305,7 +310,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 })
                 produs = "Burduf"
             if productType == "4": #Metalica
@@ -317,7 +323,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 })
                 produs = "Metalica"
             if productType == "5": #Rampa
@@ -329,7 +336,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 })
                 produs = "Rampa"
             if productType == "6": #Rapida
@@ -341,7 +349,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 })
                 produs = "Rapida"
             if productType == "7": #Sectionala
@@ -353,7 +362,8 @@ def addDoor(request):
                     "id": str(doorId),
                     "data_inspectiei": door.dataInspectiei,
                     "tehnician": door.tehnician,
-                    "oras": door.oras,
+                    "lipsuri": door.lipsuri,
+                    "informare": door.informare,
                 })
                 produs = "Sectionala"
 
@@ -421,7 +431,9 @@ def export(request):
     doorCount = 0
     for doorEntry in doorDB: # to export the files with correct title
         doorCount = doorCount + 1
-        doorObject = Door(site, doorEntry.productType, doorEntry.produs, doorEntry.anFabricatie, doorEntry.nr, doorEntry.dimensiuni, doorEntry.tip, doorEntry.titluTabel, doorEntry.nrCanate, doorEntry.model, doorEntry.dataInspectiei, doorEntry.tehnician, doorEntry.oras)
+        print("In export function: ", doorEntry.lipsuri, doorEntry.informare)
+        doorObject = Door(site, doorEntry.productType, doorEntry.produs, doorEntry.anFabricatie, doorEntry.nr, doorEntry.dimensiuni, doorEntry.tip, doorEntry.titluTabel, doorEntry.nrCanate, doorEntry.model, doorEntry.dataInspectiei, doorEntry.tehnician, doorEntry.lipsuri, doorEntry.informare)
+        print("After object creation: ", doorObject.lipsuri, doorObject.informare)
         updateTitle(doorObject)
         doorObject.setFileName()
         doorObject.setComponents()
@@ -433,7 +445,7 @@ def export(request):
             component.number = componentEntry.number
             component.notes = componentEntry.notes
 
-        siteObject = Site(site.contract, site.beneficiar, site.locatie, site.nrComanda)
+        siteObject = Site(site.contract, site.beneficiar, site.locatie, site.nrComanda, site.oras)
 
         Site.fillFile(siteObject, doorObject, doorCount)
 

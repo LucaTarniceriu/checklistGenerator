@@ -6,6 +6,7 @@ class SiteForm(forms.Form):
     beneficiar = forms.CharField(max_length=100)
     locatie = forms.CharField(max_length=100)
     nr_comanda = forms.CharField(max_length=100)
+    oras = forms.CharField(max_length=50)
 
     formName = forms.CharField(max_length=100, widget=forms.HiddenInput(), initial='siteForm')
 
@@ -36,7 +37,10 @@ class UsaAntifocForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 
 class UsaAutomataForm(forms.Form):
@@ -44,7 +48,6 @@ class UsaAutomataForm(forms.Form):
         choices=[("1", "1"), ("2", "2")],
         widget=forms.RadioSelect
     )
-    model = forms.RadioSelect(choices=(("1", "GEZE"), ("2", "DORMA")))
     model = forms.ChoiceField(
         choices=[("1", "GEZE"), ("2", "DORMA")],
         widget=forms.RadioSelect
@@ -57,7 +60,10 @@ class UsaAutomataForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 class BurdufForm(forms.Form):
 
@@ -69,7 +75,10 @@ class BurdufForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 class UsaMetalicaForm(forms.Form):
 
@@ -81,7 +90,10 @@ class UsaMetalicaForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 class RampaForm(forms.Form):
 
@@ -93,7 +105,10 @@ class RampaForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 class UsaRapidaForm(forms.Form):
 
@@ -105,7 +120,10 @@ class UsaRapidaForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)
 
 class UsaSectionalaForm(forms.Form):
 
@@ -117,4 +135,7 @@ class UsaSectionalaForm(forms.Form):
     id = forms.CharField(widget=forms.HiddenInput(), initial="empty")
     data_inspectiei = forms.CharField(initial=str(datetime.date.today().strftime("%d/%m/%Y")), required=True)
     tehnician = forms.CharField(max_length=30)
-    oras = forms.CharField(max_length=30)
+     
+
+    lipsuri = forms.BooleanField(initial=False, required=False)
+    informare = forms.BooleanField(initial=False, required=False)

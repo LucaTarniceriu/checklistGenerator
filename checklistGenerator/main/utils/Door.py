@@ -1,10 +1,10 @@
 from openpyxl import load_workbook
 from main.utils.DoorComponent import DoorComponent
-import datetime, os
+import os
 from .Site import Site
 
 class Door:
-    def __init__(self, site = "empty", productType = "empty", produs = "empty", anFabricatie = 0, nr = "empty", dimensiuni = "empty", tip = "empty", titluTabel = "empty", nrCanate = "", model="", data_inspecite="", tehnician="", oras=""):
+    def __init__(self, site = "empty", productType = "empty", produs = "empty", anFabricatie = 0, nr = "empty", dimensiuni = "empty", tip = "empty", titluTabel = "empty", nrCanate = "", model="", data_inspecite="", tehnician="", lipsuri=False, informare=False):
         self.site = site
 
         self.productType = productType
@@ -25,7 +25,9 @@ class Door:
         self.componente = []
         self.data_inspectiei = data_inspecite
         self.tehnician = tehnician
-        self.oras = oras
+
+        self.lipsuri = lipsuri
+        self.informare = informare
 
 
     def setFileName(self):

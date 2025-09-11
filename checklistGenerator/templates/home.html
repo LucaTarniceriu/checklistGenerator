@@ -1,7 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block title %}Home{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -12,43 +16,56 @@
         }
     </script>
 
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
+<div id="content">
+    <div id="buttons">
+        <form action="{% url 'logout' %}" method="post" id="logoutForm">
+            {% csrf_token %}
+            <button type="submit" id="logoutSubmit">Logout</button>
+        </form>
 
+        <div>
+            <button onclick="window.location.href='{% url 'revizie' %}'" id="addLocation">Adauga locatie</button>
+        </div>
 
+    </div>
 
-    <a href="{% url 'revizie' %}">Adauga locatie</a>
-    {% if siteExists == 'true' %}
-        {% for entryLocatie in locatiiDatabase %}
-            <div class="locationEntry">
-                {% if entryLocatie.exported == True %}
-                    <h3 style="color:green"> {{ entryLocatie }} </h3>
-                {% else %}
-                    <h3> {{ entryLocatie }} </h3>
-                {% endif %}
-                <form method="post" action="{% url 'magazinRedirect' %}">
-                    {% csrf_token %}
-                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
-                    <input type="submit" value="editeaza">
-                </form>
+    <div id="locationList">
 
-                <form method="post" action="{% url 'deleteSiteRequest' %}">
-                    {% csrf_token %}
-                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
-                    <input type="submit" style="color:red" value="sterge">
-                </form>
+        {% if siteExists == 'true' %}
+            {% for entryLocatie in locatiiDatabase %}
+                <div class="locationEntry">
+                    {% if entryLocatie.exported == True %}
+                        <h3 style="color:green"> {{ entryLocatie }} </h3>
+                    {% else %}
+                        <h3> {{ entryLocatie }} </h3>
+                    {% endif %}
+                    <div id="editDelete">
+                        <form method="post" action="{% url 'magazinRedirect' %}">
+                            {% csrf_token %}
+                            <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
+                            <input type="submit" value="editeaza" class="actionButton">
+                        </form>
 
-                <form method="post" action="{% url 'pdfExport' %}">
-                    {% csrf_token %}
-                    <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
-                    <input id="submitButton{{entryLocatie.locatie}}" type="submit" style="color:blue;" value="PDF" onmousedown="change(this.id)">
-                </form>
-            </div>
-        {% endfor %}
+                        <form method="post" action="{% url 'deleteSiteRequest' %}">
+                            {% csrf_token %}
+                            <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
+                            <input type="submit" style="color:red" value="sterge" class="actionButton">
+                        </form>
+                    </div>
 
-    {% endif %}
+                    <form method="post" action="{% url 'pdfExport' %}">
+                        {% csrf_token %}
+                        <input type="text" hidden value="{{entryLocatie.locatie}}" name="location">
+                        <input id="submitButton{{entryLocatie.locatie}}" type="submit" style="color:blue;" value="PDF" onmousedown="change(this.id)">
+                    </form>
+                </div>
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+</div>
 
 
 {% else %}

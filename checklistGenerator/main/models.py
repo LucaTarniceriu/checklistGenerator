@@ -8,6 +8,7 @@ class SiteModel(models.Model):
     locatie = models.CharField(max_length=30)
     nrComanda = models.CharField(max_length=30)
     exported = models.BooleanField(default=False)
+    oras = models.CharField(max_length=30)
 
     class Meta:
         constraints = [
@@ -36,7 +37,9 @@ class DoorModel(models.Model):
 
     dataInspectiei = models.CharField(max_length=11)
     tehnician = models.CharField(max_length=30)
-    oras = models.CharField(max_length=30)
+
+    lipsuri = models.BooleanField(default=False)
+    informare = models.BooleanField(default=False)
 
 
 

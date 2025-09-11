@@ -1,4 +1,6 @@
 import subprocess, os, webbrowser, shutil
+
+from django.utils.translation.template import dot_re
 from openpyxl import load_workbook
 class Site:
 
@@ -8,11 +10,12 @@ class Site:
     final_output_dir = "/home/themartianx/Documents/checklistsFinal/" #this folder has to be empty
     input_dir = "/home/themartianx/PycharmProjects/checklistGenerator/checklistGenerator/xlsx/"
 
-    def __init__(self, contract, beneficiar, locatie, nrComanda):
+    def __init__(self, contract, beneficiar, locatie, nrComanda, oras):
         self.contract = contract
         self.beneficiar = beneficiar
         self.locatie = locatie
         self.nrComanda = nrComanda
+        self.oras = oras
         self.doors = []
 
     def addDoor(self, door):
@@ -22,10 +25,10 @@ class Site:
         return self.beneficiar+" "+self.locatie
 
     @staticmethod
-    def fillFile(siteObject, doorObject, doorCount, reprezentant=" ", boolLipsuri="□", boolInformat="□"):
+    def fillFile(siteObject, doorObject, doorCount, reprezentant=" "):
         #!! Modify the directory for Windows
         copyDir = "/home/themartianx/checklistTemp"
-        newName = doorObject.oras+siteObject.locatie+"("+str(doorCount)+")"+".xlsx"
+        newName = siteObject.oras+siteObject.locatie+"("+str(doorCount)+")"+".xlsx"
         copiedFile = os.path.join(copyDir, newName)
         shutil.copy(Site.input_dir+doorObject.fileName, copiedFile)
         wb = load_workbook(filename=copiedFile)
@@ -41,11 +44,19 @@ class Site:
         ws['D9'] = doorObject.tip
 
         ws['B12'] = doorObject.titluTabel
-        ws['B47'] = boolLipsuri
-        ws['B48'] = boolInformat
         ws['D49'] = doorObject.data_inspectiei
         ws['D50'] = doorObject.tehnician
         ws['D51'] = reprezentant
+
+
+        if doorObject.lipsuri:
+            ws['B47'] = "✓"
+        else:
+            ws['B47'] = "□"
+        if doorObject.informare:
+            ws['B48'] = "✓"
+        else:
+            ws['B48'] = "□"
 
 
         for row in range(1, doorObject.nrComponente+1):
@@ -68,6 +79,8 @@ class Site:
         wb.save(copiedFile)
         Site.pdfExport(copiedFile)
         os.remove(copiedFile)
+
+        print(doorObject.lipsuri, doorObject.informare)
 
     @staticmethod
     def pdfExport(fileName):
